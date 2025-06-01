@@ -35,12 +35,23 @@ export default {
     return { chargers: [] };
   },
   async mounted() {
-    const res = await axios.get('/api/chargers', {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    });
-    this.chargers = res.data;
+    await this.fetchChargers();
+  },
+  watch: {
+    '$route.query.refresh': {
+      handler(val) {
+        if (val) this.fetchChargers();
+      },
+      immediate: true
+    }
   },
   methods: {
+    async fetchChargers() {
+      const res = await axios.get('/api/chargers', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      this.chargers = res.data;
+    },
     async delCharger(id) {
       await axios.delete('/api/chargers/' + id, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -96,7 +107,6 @@ export default {
 .logout-btn:hover {
   background-color: #a71d2a;
 }
-
 
 .add-btn {
   background-color: #2e86de;
